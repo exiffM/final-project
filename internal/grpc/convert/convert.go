@@ -3,6 +3,7 @@ package convert
 import (
 	rpcapi "final-project/internal/grpc/pb"
 	types "final-project/internal/statistics"
+	"fmt"
 )
 
 type ClientRequest struct {
@@ -21,7 +22,7 @@ func ConvertRequest(r *rpcapi.Request) ClientRequest {
 func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 	var pbStat rpcapi.Statistic
 	if s.ASLStat == nil {
-		pbStat.SysLoad = &rpcapi.AvgSysLoad{}
+		pbStat.SysLoad = nil
 	} else {
 		pbStat.SysLoad = &rpcapi.AvgSysLoad{
 			One:    s.ASLStat.OneMinLoad,
@@ -30,7 +31,7 @@ func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 		}
 	}
 	if s.ACLStat == nil {
-		pbStat.CpuLoad = &rpcapi.AvgCpuLoad{}
+		pbStat.CpuLoad = nil
 	} else {
 		pbStat.CpuLoad = &rpcapi.AvgCpuLoad{
 			Usr:  s.ACLStat.Usr,
@@ -39,7 +40,7 @@ func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 		}
 	}
 	if s.DIStat == nil {
-		pbStat.DiskInfo = &rpcapi.DiskStats{}
+		pbStat.DiskInfo = nil
 	} else {
 		pbStat.DiskInfo = &rpcapi.DiskStats{Stats: make(map[string]*rpcapi.DiskInfo)}
 		for key := range s.DIStat {
@@ -51,7 +52,7 @@ func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 		}
 	}
 	if s.FSDIStat == nil {
-		pbStat.FsInfo = &rpcapi.FSDStats{}
+		pbStat.FsInfo = nil
 	} else {
 		pbStat.FsInfo = &rpcapi.FSDStats{
 			Fsdblocks: make([]*rpcapi.FSD, 0),
@@ -77,13 +78,13 @@ func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 		}
 	}
 	if s.TTStat == nil {
-		pbStat.Tts = &rpcapi.TopTalkersStats{}
+		pbStat.Tts = nil
 	} else {
 		// TODO:
 		_ = 5
 	}
 	if s.NStat == nil {
-		pbStat.Net = &rpcapi.NetStats{}
+		pbStat.Net = nil
 	} else {
 		pbStat.Net = &rpcapi.NetStats{
 			TuListeners: make([]*rpcapi.Listeners, 0),
@@ -100,4 +101,52 @@ func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
 		pbStat.Net.States = s.NStat.TCPStatesCount
 	}
 	return &pbStat
+}
+
+func PrintStatistic(s *rpcapi.Statistic) {
+	// Average system load
+	if s.SysLoad != nil {
+		fmt.Printf("Average system load: One minute: %v, Five minutes: %v, Fiveteen minutes: %v;\n",
+			s.SysLoad.One, s.SysLoad.Five, s.SysLoad.Quater)
+	}
+	// Average cpu load
+	if s.CpuLoad != nil {
+		fmt.Printf("Average CPU load: %vus, %vsy, %vid;\n", s.CpuLoad.Usr, s.CpuLoad.Sys, s.CpuLoad.Idle)
+	}
+	// Average disk load
+	if s.DiskInfo != nil {
+		fmt.Printf("Device\t\ttps\t\tKb_read/s\t\tKb_wrtn/s\n")
+		for key, elem := range s.DiskInfo.Stats {
+			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\n", key, elem.Tps, elem.Kbrps, elem.Kbwps)
+		}
+	}
+	// Disks file system info
+	if s.FsInfo != nil {
+		fmt.Println("Disks file system info by blocks")
+		fmt.Println("Source\t\tFile system\t\tSize\t\tUsed\t\tPercent")
+		for _, elem := range s.FsInfo.Fsdblocks {
+			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\t\t%v\n",
+				elem.Source, elem.Fs, elem.Total, elem.Used, elem.Percent)
+		}
+		fmt.Println("Disks file system info by inodes")
+		fmt.Println("Source\t\tFile system\t\tTotal\t\tiUsed\t\tiPercent")
+		for _, elem := range s.FsInfo.Fsdinodes {
+			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\t\t%v\n",
+				elem.Source, elem.Fs, elem.Total, elem.Used, elem.Percent)
+		}
+	}
+	// Net stats: tcp/udp listeners
+	if s.Net != nil {
+		fmt.Println("Net statistic tcp/udp listeners")
+		fmt.Println("Prog/PID\t\tUser\t\tProtocol\t\tPort")
+		for _, elem := range s.Net.TuListeners {
+			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\n",
+				elem.Pid, elem.User, elem.Protoc, elem.Port)
+		}
+		// Net stats: tcp sockets state
+		fmt.Println("Averaged TCP sockets states:")
+		for key := range s.Net.States {
+			fmt.Printf("%v - %v\n", key, s.Net.States[key])
+		}
+	}
 }
