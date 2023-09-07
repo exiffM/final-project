@@ -21,24 +21,39 @@ func TestAppend(t *testing.T) {
 
 func TestPullOut(t *testing.T) {
 	storage.Clear()
-	st := types.Statistic{}
 	// Append 5 elems in storage
 	for i := 0; i < 5; i++ {
+		st := &types.Statistic{
+			ASLStat:  types.NewASLS(),
+			ACLStat:  types.NewACLS(),
+			DIStat:   make(types.DiskInfoStats),
+			FSDIStat: types.NewFSDIS(0),
+			TTStat:   &types.TopTalkersStat{},
+			NStat:    types.NewNetStat(0),
+		}
 		st.ASLStat.OneMinLoad = 1 + float64(i)
 		st.ASLStat.FiveMinLoad = 5 + float64(i)
 		st.ASLStat.QuaterLoad = 15 + float64(i)
-		storage.Append(st)
+		storage.Append(*st)
 	}
 	result := storage.PullOut(5)
 	require.ElementsMatch(t, result, storage.stats, "Elements missmatch!")
 	// Append 5 more
 	tempTail := make([]types.Statistic, 0)
 	for i := 5; i < 10; i++ {
+		st := &types.Statistic{
+			ASLStat:  types.NewASLS(),
+			ACLStat:  types.NewACLS(),
+			DIStat:   make(types.DiskInfoStats),
+			FSDIStat: types.NewFSDIS(0),
+			TTStat:   &types.TopTalkersStat{},
+			NStat:    types.NewNetStat(0),
+		}
 		st.ASLStat.OneMinLoad = 1 + float64(i)
 		st.ASLStat.FiveMinLoad = 5 + float64(i)
 		st.ASLStat.QuaterLoad = 15 + float64(i)
-		tempTail = append(tempTail, st)
-		storage.Append(st)
+		tempTail = append(tempTail, *st)
+		storage.Append(*st)
 	}
 	result = storage.PullOut(5)
 	require.ElementsMatch(t, result, tempTail, "Elements missmatch!")

@@ -1,14 +1,17 @@
-BIN := "./bin/monitor"
+BIN_MONITOR := "./bin/monitor/monitor"
+BIN_CLIENT := "./bin/client/client"
 DOCKER_IMG="monitor:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
 LDFLAGS := -X main.release="develop" -X main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S) -X main.gitHash=$(GIT_HASH)
 
 build:
-	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/monitor
+	go build -v -o $(BIN_MONITOR) -ldflags "$(LDFLAGS)" ./cmd/monitor
+	go build -v -o $(BIN_CLIENT) -ldflags "$(LDFLAGS)" ./cmd/client
 
 run: build
-	$(BIN) --config=./configs/config.yml
+	$(BIN_MONITOR) --config=./configs/config.yml
+	$(BIN_CLIENT)
 
 generate:
 	go get \
@@ -20,10 +23,13 @@ generate:
 
 	protoc --go-grpc_out=./internal/grpc/pb --go_out=./internal/grpc/pb ./api/MonitorService.proto
 
+test:
+	go test -v -race -cover -timeout=1m ./...
+
 install-lint-deps:
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.53.3
 
 lint: install-lint-deps
 	golangci-lint -v run ./...
 
-test:
+.PHONY: build run test lint

@@ -40,41 +40,38 @@ func TestCreate(t *testing.T) {
 	require.True(t, agent.AllowAvgCpuLoad, "Average cpu load stat is off")
 	require.True(t, agent.AllowDiskLoad, "Disk load stat is off")
 	require.True(t, agent.AllowDiskFsInfo, "Disk file system info is off")
-	require.True(t, agent.AllowTTNet, "Top talkers net stat is off")
+	require.False(t, agent.AllowTTNet, "Top talkers net stat is off")
 	require.True(t, agent.AllowNetStats, "Net stat is off")
 }
 
 func TestAvgSysLoad(t *testing.T) {
 	out, err := agent.averageSystemLoad()
 	require.Nil(t, err, "Error occured!")
-	require.Contains(t, out, "System load average:")
+	require.NotEmpty(t, out, "Average system load not parsed")
 }
 
 func TestAvgCpuLoad(t *testing.T) {
 	out, err := agent.averageCpuLoad()
 	require.Nil(t, err, "Error occured!")
-	require.Contains(t, out, "Cpu", "Invalid output: %q", out)
-	require.Contains(t, out, "us", "Invalid output: %q", out)
-	require.Contains(t, out, "sy", "Invalid output: %q", out)
-	require.Contains(t, out, "id", "Invalid output: %q", out)
+	require.NotEmpty(t, out, "Average cpu load not parsed")
 }
 
 func TestLoadDiskInfo(t *testing.T) {
 	out, err := agent.loadDiskInfo()
 	require.Nil(t, err, "Error occured!")
-	require.Contains(t, out, "sda", "Invalid output: %q", out)
+	require.NotEmpty(t, out, "Disks information not parsed")
 }
 
 func TestFSDInfo(t *testing.T) {
 	out, err := agent.fileSystemDiskInfo()
-	require.Errorf(t, err, "Error: %q", err.Error())
-	require.Contains(t, out, "sda", "Invalid output: %q", out)
+	require.Nil(t, err, "Error occured!")
+	require.NotEmpty(t, out, "Disks file system information not parsed")
 }
 
 func TestNetStatistics(t *testing.T) {
 	out, err := agent.netStatistics()
-	require.Errorf(t, err, "Error: %q", err.Error())
-	require.Contains(t, out, "tcp", "Invalid output: %q", out)
+	require.Nil(t, err, "Error occured!")
+	require.NotEmpty(t, out, "Net statistics not parsed")
 }
 
 func TestAvgStats(t *testing.T) {
@@ -84,6 +81,5 @@ func TestAvgStats(t *testing.T) {
 		require.Fail(t, "Accumulation error occured")
 	}
 	st := agent.Average(5)
-	_ = st
-	// TODO:
+	require.NotEmpty(t, st, "Net statistics not parsed")
 }

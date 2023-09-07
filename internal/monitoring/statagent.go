@@ -312,38 +312,61 @@ func (a *Agent) AccumulateStats(ctx context.Context) error {
 
 func (a *Agent) Average(m int) types.Statistic {
 	stats := a.data.PullOut(m)
-	avgStat := types.Statistic{
-		ASLStat:  types.NewASLS(),
-		ACLStat:  types.NewACLS(),
-		DIStat:   make(types.DiskInfoStats),
-		FSDIStat: types.NewFSDIS(len(stats[0].FSDIStat.FSDBlocks)),
-		NStat:    types.NewNetStat(len(stats[0].NStat.TUListeners)),
+	avgStat := types.Statistic{}
+	if a.AllowAvgSysLoad {
+		avgStat.ASLStat = types.NewASLS()
 	}
-	// avgStat.DIStat = make(types.DiskInfoStats)
-	// avgStat.NStat.TCPStatesCount = make(map[string]float64)
-	// avgStat.FSDIStat.FSDBlocks = make([]types.FSD, len(stats[0].FSDIStat.FSDBlocks))
-	// avgStat.FSDIStat.FSDInodes = make([]types.FSD, len(stats[0].FSDIStat.FSDInodes))
+	if a.AllowAvgCpuLoad {
+		avgStat.ACLStat = types.NewACLS()
+	}
+	if a.AllowDiskLoad {
+		avgStat.DIStat = make(types.DiskInfoStats)
+	}
+	if a.AllowDiskFsInfo {
+		avgStat.FSDIStat = types.NewFSDIS(len(stats[0].FSDIStat.FSDBlocks))
+	}
+	if a.AllowNetStats {
+		avgStat.NStat = types.NewNetStat(len(stats[0].NStat.TUListeners))
+	}
 	// Sum up stats
 	for _, elem := range stats {
-		avgStat.ASLStat.Sum(*elem.ASLStat)
-		avgStat.ACLStat.Sum(*elem.ACLStat)
-		avgStat.DIStat.Sum(elem.DIStat)
-		avgStat.FSDIStat.Sum(*elem.FSDIStat)
-		avgStat.NStat.Sum(*elem.NStat)
+		if a.AllowAvgSysLoad {
+			avgStat.ASLStat.Sum(*elem.ASLStat)
+		}
+		if a.AllowAvgCpuLoad {
+			avgStat.ACLStat.Sum(*elem.ACLStat)
+		}
+		if a.AllowDiskLoad {
+			avgStat.DIStat.Sum(elem.DIStat)
+		}
+		if a.AllowDiskFsInfo {
+			avgStat.FSDIStat.Sum(*elem.FSDIStat)
+		}
+		if a.AllowNetStats {
+			avgStat.NStat.Sum(*elem.NStat)
+		}
 	}
-	// Averaging stats
-	avgStat.ASLStat.Avg(float64(len(stats)))
-	avgStat.ACLStat.Avg(float64(len(stats)))
-	avgStat.DIStat.Avg(float64(len(stats)))
-	avgStat.FSDIStat.Avg(float64(len(stats)))
-	avgStat.NStat.Avg(float64(len(stats)))
-
-	// Ceiling stats
-	avgStat.ASLStat.Ceil()
-	avgStat.ACLStat.Ceil()
-	avgStat.DIStat.Ceil()
-	avgStat.FSDIStat.Ceil()
-	avgStat.NStat.Ceil()
+	// Averaging and ceiling stats
+	if a.AllowAvgSysLoad {
+		avgStat.ASLStat.Avg(float64(len(stats)))
+		avgStat.ASLStat.Ceil()
+	}
+	if a.AllowAvgCpuLoad {
+		avgStat.ACLStat.Avg(float64(len(stats)))
+		avgStat.ACLStat.Ceil()
+	}
+	if a.AllowDiskLoad {
+		avgStat.DIStat.Avg(float64(len(stats)))
+		avgStat.DIStat.Ceil()
+	}
+	if a.AllowDiskFsInfo {
+		avgStat.FSDIStat.Avg(float64(len(stats)))
+		avgStat.FSDIStat.Ceil()
+	}
+	if a.AllowNetStats {
+		avgStat.NStat.Avg(float64(len(stats)))
+		avgStat.NStat.Ceil()
+	}
 
 	return avgStat
 }
