@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package monitor;
+
+option go_package = "./;rpcapi";
+
+// Average system load
+message AvgSysLoad {
+    double one    = 1;
+    double five   = 2;
+    double quater = 3;
+}
+
+// Average cpu load
+message AvgCpuLoad {
+    double usr  = 1;
+    double sys  = 2;
+    double idle = 3;
+}
+
+// Disks information
+message DiskInfo {
+    double tps   = 1;
+    double kbrps = 2;
+    double kbwps = 3;
+}
+
+message DiskStats {
+    map<string, DiskInfo> stats = 1;
+}
+
+message FSD {
+    string source  = 1;
+    string fs      = 2;
+    double total   = 3;
+    double used    = 4;
+    double percent = 5;
+}
+
+message FSDStats {
+    repeated FSD fsdblocks = 1;
+    repeated FSD fsdinodes = 2;
+}
+
+message TopTalkersStats {
+
+}
+
+message Listeners {
+    string pid    = 1;
+    string user   = 2;
+    string protoc = 3;
+    int32  port   = 4;
+}
+
+message NetStats {
+    repeated Listeners tu_listeners = 1;
+    map<string, double> states      = 2;
+}
+
+message Statistic {
+    AvgSysLoad      sys_load  = 1;
+    AvgCpuLoad      cpu_load  = 2;
+    DiskStats       disk_info = 3;
+    FSDStats        fs_info   = 4;
+    TopTalkersStats tts       = 5;
+    NetStats        net       = 6;
+}
+
+message Request {
+    int32 timeout          = 1;
+    int32 average_interval = 2;
+}
+
+service Monitor {
+    rpc SendStatistic(Request) returns (stream Statistic) {}
+}

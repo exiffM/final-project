@@ -1,4 +1,7 @@
-agent:
-  time-out: 5 # time duration of outputing system statistics
-  time-averaging: 15 # time duration of interval of monitoring, accumulating and avereging system statistics
-  time-storage: 60 # time of interval accumulating and storaging data
+storagetime: 60
+avgsysload: true
+avgcpuload: true
+diskload: true
+diskfsinfo: true
+ttnet: false
+netstats: true

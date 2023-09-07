@@ -1,13 +1,15 @@
 package config
 
-import "time"
-
 type AgentConfig struct {
-	Timeout     time.Duration // Time of outputing system data
-	AvgTime     time.Duration // Time of accumulating and averaging system data
-	StorageTime time.Duration // Time of storaging system data
+	StorageTime int64 // Time of storaging system data
+	AvgSysLoad  bool  // On/off average system load
+	AvgCpuLoad  bool  // On/off average CPU load
+	DiskLoad    bool  // On/off disks load
+	DiskFsInfo  bool  // On/off disks file system info
+	TTNet       bool  // On/off top talkers net stats
+	NetStats    bool  // On/off net stats
 }
 
-func NewConfig(t, avg, strg time.Duration) *AgentConfig {
-	return &AgentConfig{t, avg, strg}
+func NewConfig() *AgentConfig {
+	return &AgentConfig{}
 }
