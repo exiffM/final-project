@@ -26,8 +26,6 @@ jobs:
   tests:
     runs-on: ubuntu-latest
     steps:
-      - name: Extract branch name
-        run: echo "BRANCH=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
 
       - name: Set up Go
         uses: actions/setup-go@v3
