@@ -46,7 +46,7 @@ func TestLogic(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		if err := agent.AccumulateStats(ctx); err != nil {
-			log.Fatal("Accumulation finished with error!")
+			log.Fatal("Accumulation finished with error!", err.Error())
 		}
 	}()
 
