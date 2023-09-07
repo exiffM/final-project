@@ -19,3 +19,11 @@ generate:
 	mkdir ./internal/grpc/pb
 
 	protoc --go-grpc_out=./internal/grpc/pb --go_out=./internal/grpc/pb ./api/MonitorService.proto
+
+install-lint-deps:
+	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.53.3
+
+lint: install-lint-deps
+	golangci-lint -v run ./...
+
+test:

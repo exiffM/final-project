@@ -279,6 +279,7 @@ func (a *Agent) Statistics() (types.Statistic, error) {
 	}
 	if a.AllowTTNet {
 		// TODO:
+		_ = 5
 	}
 	if a.AllowNetStats {
 		net, err := a.netStatistics()

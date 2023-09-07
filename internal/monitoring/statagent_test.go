@@ -21,7 +21,9 @@ func init() {
 	}
 
 	viper.SetConfigType("yaml")
-	viper.ReadConfig(file)
+	if err := viper.ReadConfig(file); err != nil {
+		log.Fatal(err)
+	}
 
 	configuration := config.NewConfig()
 	err = viper.Unmarshal(configuration)
@@ -78,7 +80,9 @@ func TestNetStatistics(t *testing.T) {
 func TestAvgStats(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
-	agent.AccumulateStats(ctx)
+	if err := agent.AccumulateStats(ctx); err != nil {
+		require.Fail(t, "Accumulation error occured")
+	}
 	st := agent.Average(5)
 	_ = st
 	// TODO:
