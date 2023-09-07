@@ -35,6 +35,9 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
 
+      - name: Check fsd
+        run: iostat -d -k | tail -n+4 | head -n-2
+
       - name: Copy config for tests
         run: sudo mkdir /etc/system.monitor | sudo cp -f ./configs/config.yml /etc/system.monitor
 
