@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Copy config for tests
-        run: sudo mkdir /etc/system.monitor | ls -la ${GITHUB_WORKSPACE}
+        run: sudo mkdir /etc/system.monitor | ls -la ${GITHUB_WORKSPACE}/configs
 
       - name: Unit tests
         run: go test -v -race -timeout=1m ./...
