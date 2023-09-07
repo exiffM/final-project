@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Copy config for tests
-        run: sudo mkdir /etc/system.monitor | sudo cp ./configs/config.yml /etc/system.monitor
+        run: sudo mkdir /etc/system.monitor | sudo cp -f ./configs/config.yml /etc/system.monitor
 
       - name: Unit tests
         run: go test -v -race -timeout=1m ./...
