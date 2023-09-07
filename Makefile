@@ -13,6 +13,18 @@ run: build
 	$(BIN_MONITOR) --config=./configs/config.yml
 	$(BIN_CLIENT)
 
+build-img:
+	docker build \
+		--build-arg=LDFLAGS="$(LDFLAGS)" \
+		-t $(DOCKER_IMG) \
+		-f build/Dockerfile .
+
+run-img: build-img
+	docker run $(DOCKER_IMG)
+
+version:
+	$(BIN_MONITOR) version
+
 generate:
 	go get \
 		google.golang.org/grpc \
