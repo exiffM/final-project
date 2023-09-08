@@ -39,7 +39,7 @@ jobs:
         # run: sudo systemctl stop xdg-document-portal.service
 
       - name: Check command execution
-        run: df --output='source','fstype','size','used','pcent' | tail -n+2
+        run: df --output='source','fstype','size','used','pcent'
 
       - name: Copy config for tests
         run: sudo mkdir /etc/system.monitor | sudo cp -f ./configs/config.yml /etc/system.monitor
