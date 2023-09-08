@@ -36,7 +36,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Stop xdg-document-portal for df execution
-        run: systemctl --user stop xdg-document-portal.service
+        run: sudo systemctl --user stop xdg-document-portal.service
 
       - name: Copy config for tests
         run: sudo mkdir /etc/system.monitor | sudo cp -f ./configs/config.yml /etc/system.monitor
@@ -48,4 +48,4 @@ jobs:
         run: go test -v -timeout=1m -tags bench ./...
 
       - name: Restart xdg-document-portal
-        run: systemctl --user start xdg-document-portal.service
+        run: sudo systemctl --user start xdg-document-portal.service
