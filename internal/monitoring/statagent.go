@@ -37,7 +37,7 @@ func NewAgent(cfg config.AgentConfig) *Agent {
 }
 
 var (
-	errAccumulationFSD = errors.New("accumulation of fyle system disk info error")
+	errAccumulationFSD = errors.New("accumulation of file system disk info error")
 	errAccumulationLis = errors.New("accumulation of tcp/udp listeners error")
 )
 
@@ -57,9 +57,14 @@ func accumulateFSDInfo(fields []string) ([]types.FSD, error) {
 			return nil, errAccumulationFSD
 		}
 		info.Used = usd
-		pcnt, err := strconv.ParseFloat(strings.TrimSuffix(fields[i+4], "%"), 64)
-		if err != nil {
-			return nil, errAccumulationFSD
+		var pcnt float64 // if % is unknown output is "-"
+		if fields[i+4] == "-" {
+			pcnt = 0
+		} else {
+			pcnt, err = strconv.ParseFloat(strings.TrimSuffix(fields[i+4], "%"), 64)
+			if err != nil {
+				return nil, errAccumulationFSD
+			}
 		}
 		info.Percent = pcnt
 		result = append(result, info)
