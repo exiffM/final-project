@@ -9,7 +9,7 @@ env:
 
 jobs:
   lint:
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
     steps:        
       - name: Set up Go
         uses: actions/setup-go@v3
@@ -24,7 +24,7 @@ jobs:
         with:
           version: v1.53.3
   tests:
-    runs-on: debian-latest
+    runs-on: ubuntu-latest
     steps:
 
       - name: Set up Go
