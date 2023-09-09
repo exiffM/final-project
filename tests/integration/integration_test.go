@@ -4,11 +4,16 @@ package integration_test
 
 import (
 	"context"
+	"final-project/internal/config"
 	rpcapi "final-project/internal/grpc/pb"
+	"final-project/internal/grpc/server"
+	"final-project/internal/monitoring"
 	"fmt"
 	"os"
+	"sync"
 	"testing"
 
+	"github.com/spf13/viper"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -16,31 +21,63 @@ import (
 
 type MonitorSuite struct {
 	suite.Suite
-	conn   *grpc.ClientConn
-	client rpcapi.MonitorClient
-	ctx    context.Context
+	agent         *monitoring.Agent
+	ctx           context.Context
+	cancel        context.CancelFunc
+	serv          *server.Server
+	configuration *config.AgentConfig
+	wg            sync.WaitGroup
+}
+
+func (m *MonitorSuite) SetupSuite() {
+	file, err := os.Open("/etc/system.monitor/config.yml")
+	m.Require().NoError(err, "Open config file error occured!")
+
+	viper.SetConfigType("yaml")
+	err = viper.ReadConfig(file)
+	m.Require().NoError(err, "Read config file error occured!")
+
+	m.configuration = config.NewConfig()
+	err = viper.Unmarshal(m.configuration)
+	m.Require().NoError(err, "Unmarshal config file error occured!")
+
+	m.ctx, m.cancel = context.WithCancel(context.Background())
+	m.agent = monitoring.NewAgent(*m.configuration)
+	m.serv = server.NewServer(m.agent)
 }
 
 func (m *MonitorSuite) SetupTest() {
-	// Create grpc conn for client
 	fmt.Print("Test set up")
+	m.wg.Add(2)
+
+	go func() {
+		defer m.wg.Done()
+		err := m.agent.AccumulateStats(m.ctx)
+		m.Require().NoError(err)
+	}()
+
+	go func() {
+		defer m.wg.Done()
+		err := m.serv.Start("localhost:50051")
+		m.Require().NoError(err)
+	}()
+}
+
+func (m *MonitorSuite) TestService() {
 	host := os.Getenv("MONITOR_HOST")
 	if host == "" {
 		host = "localhost:50051"
 	}
 	var err error
-	m.conn, err = grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(host, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	m.Require().NoError(err, "create client connection error")
-	m.ctx = context.Background()
-	m.client = rpcapi.NewMonitorClient(m.conn)
-}
-
-func (m *MonitorSuite) TestService() {
+	ctx := context.Background()
+	client := rpcapi.NewMonitorClient(conn)
 	r := &rpcapi.Request{
 		Timeout:         5,
 		AverageInterval: 15,
 	}
-	monitorClient, err := m.client.SendStatistic(m.ctx, r)
+	monitorClient, err := client.SendStatistic(ctx, r)
 	m.Require().NoError(err)
 
 	stats, err := monitorClient.Recv()
@@ -54,8 +91,10 @@ func (m *MonitorSuite) TestService() {
 	m.Require().Greater(stats.SysLoad.Quater, float64(0), "System load 15 is less than zero")
 }
 
-func (m *MonitorSuite) TearDownTest() {
-	m.conn.Close()
+func (m *MonitorSuite) TearDownSuite() {
+	m.serv.Shutdown()
+	m.cancel()
+	m.wg.Wait()
 }
 
 func TestMonitorService(t *testing.T) {

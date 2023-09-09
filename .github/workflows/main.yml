@@ -43,3 +43,6 @@ jobs:
 
       - name: Optimization tests
         run: go test -v -timeout=1m -tags bench ./...
+      
+      - name: Integration tests
+        run: go test -tags integration ./tests/integration
