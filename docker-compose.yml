@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+
+    client:
+        build:
+          context: ./
+          dockerfile: ./build/client/Dockerfile
+        container_name: monitor-client
+        depends_on:
+            - monitor
+        environment: 
+          - MONITOR_HOST=monitor
+        
+    monitor:
+        build:
+          context: ./
+          dockerfile: ./build/monitor/Dockerfile
+        ports: 
+          - "50051:50051"
+        container_name: monitor
+        environment:
+          - IS_IN_CONTAINER=1

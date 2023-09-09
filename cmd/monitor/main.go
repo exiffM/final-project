@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"sync"
@@ -51,6 +52,7 @@ func main() {
 	wg.Add(2)
 
 	ctx, cancel := context.WithCancel(context.Background())
+	_ = ctx
 	defer cancel()
 
 	agent := monitoring.NewAgent(*configuration)
@@ -63,9 +65,17 @@ func main() {
 
 	serv := server.NewServer(agent)
 
+	containered := os.Getenv("IS_IN_CONTAINER")
+	var host string
+	if containered == "1" {
+		host = "0.0.0.0"
+	} else {
+		host = "localhost"
+	}
+
 	go func() {
 		defer wg.Done()
-		if err := serv.Start("localhost:50051"); err != nil {
+		if err := serv.Start(net.JoinHostPort(host, "50051")); err != nil {
 			log.Fatal("Grpc server didn't start cause of error!")
 		}
 	}()
