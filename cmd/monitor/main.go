@@ -41,11 +41,11 @@ func main() {
 		fmt.Println(err.Error() + "No such file o directory")
 		return
 	}
-	defer file.Close() //nolint: gocritic
+	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
-		log.Fatal("Reading config error!")
+		log.Fatal("Reading config error!") //nolint: gocritic
 	}
 
 	configuration := config.NewConfig()

@@ -19,11 +19,11 @@ func init() {
 	if err != nil {
 		return
 	}
-	defer file.Close() //nolint: gocritic
+	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
-		log.Fatal(err)
+		log.Fatal(err) //nolint: gocritic
 	}
 
 	configuration := config.NewConfig()
