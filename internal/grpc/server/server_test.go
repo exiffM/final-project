@@ -23,7 +23,7 @@ func init() {
 	if err != nil {
 		return
 	}
-	defer file.Close()
+	defer file.Close() //nolint: gocritic
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {

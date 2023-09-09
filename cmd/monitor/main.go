@@ -41,7 +41,7 @@ func main() {
 		fmt.Println(err.Error() + "No such file o directory")
 		return
 	}
-	defer file.Close()
+	defer file.Close() //nolint: gocritic
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
