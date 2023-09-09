@@ -32,6 +32,7 @@ type MonitorSuite struct {
 
 func (m *MonitorSuite) SetupSuite() {
 	file, err := os.Open("/etc/system.monitor/config.yml")
+	defer file.Close()
 	m.Require().NoError(err, "Open config file error occurred!")
 
 	viper.SetConfigType("yaml")

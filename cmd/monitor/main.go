@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 
@@ -17,10 +18,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-var configFilePath string
+var (
+	configFilePath string
+	port           int
+)
 
 func init() {
 	flag.StringVar(&configFilePath, "config", "/etc/system.monitor/config.yml", "Path to configuration file")
+	flag.IntVar(&port, "port", 50051, "Port of rpc server")
 }
 
 func main() {
@@ -36,6 +41,7 @@ func main() {
 		fmt.Println(err.Error() + "No such file o directory")
 		return
 	}
+	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
@@ -75,7 +81,7 @@ func main() {
 
 	go func() {
 		defer wg.Done()
-		if err := serv.Start(net.JoinHostPort(host, "50051")); err != nil {
+		if err := serv.Start(net.JoinHostPort(host, strconv.Itoa(port))); err != nil {
 			log.Fatal("Grpc server didn't start cause of error!")
 		}
 	}()

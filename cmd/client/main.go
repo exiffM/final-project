@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"flag"
 	"log"
 	"net"
 	"os"
+	"strconv"
 
 	"github.com/exiffM/final-project/internal/grpc/convert"
 	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
@@ -12,12 +14,20 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+var port int
+
+func init() {
+	flag.IntVar(&port, "port", 50051, "Port of rpc server")
+}
+
 func main() {
+	flag.Parse()
+
 	host := os.Getenv("MONITOR_HOST")
 	if host == "" {
 		host = "localhost"
 	}
-	conn, err := grpc.Dial(net.JoinHostPort(host, "50051"),
+	conn, err := grpc.Dial(net.JoinHostPort(host, strconv.Itoa(port)),
 		grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatal(err)

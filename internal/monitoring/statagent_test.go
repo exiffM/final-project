@@ -19,6 +19,7 @@ func init() {
 	if err != nil {
 		return
 	}
+	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
