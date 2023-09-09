@@ -32,15 +32,15 @@ type MonitorSuite struct {
 
 func (m *MonitorSuite) SetupSuite() {
 	file, err := os.Open("/etc/system.monitor/config.yml")
-	m.Require().NoError(err, "Open config file error occured!")
+	m.Require().NoError(err, "Open config file error occurred!")
 
 	viper.SetConfigType("yaml")
 	err = viper.ReadConfig(file)
-	m.Require().NoError(err, "Read config file error occured!")
+	m.Require().NoError(err, "Read config file error occurred!")
 
 	m.configuration = config.NewConfig()
 	err = viper.Unmarshal(m.configuration)
-	m.Require().NoError(err, "Unmarshal config file error occured!")
+	m.Require().NoError(err, "Unmarshal config file error occurred!")
 
 	m.ctx, m.cancel = context.WithCancel(context.Background())
 	m.agent = monitoring.NewAgent(*m.configuration)

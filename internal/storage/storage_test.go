@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	types "github.com/exiffM/final-project/internal/statistics"
-
 	"github.com/stretchr/testify/require"
 )
 

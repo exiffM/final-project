@@ -12,15 +12,11 @@ type ClientRequest struct {
 	AveragingInterval int
 }
 
-func NewRpcDiskInfo() *rpcapi.DiskStats {
+func NewRPCDiskInfo() *rpcapi.DiskStats {
 	return &rpcapi.DiskStats{Stats: make(map[string]*rpcapi.DiskInfo)}
 }
 
-func ConvertRequest(r *rpcapi.Request) ClientRequest {
-	return ClientRequest{int(r.GetTimeout()), int(r.GetAverageInterval())}
-}
-
-func ConvertStatistic(s types.Statistic) *rpcapi.Statistic {
+func Statistic(s types.Statistic) *rpcapi.Statistic {
 	var pbStat rpcapi.Statistic
 	if s.ASLStat == nil {
 		pbStat.SysLoad = nil

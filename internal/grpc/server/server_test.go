@@ -10,7 +10,6 @@ import (
 	"github.com/exiffM/final-project/internal/config"
 	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
 	"github.com/exiffM/final-project/internal/monitoring"
-
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
@@ -62,7 +61,7 @@ func TestLogic(t *testing.T) {
 
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(err) //nolint: gocritic
 	}
 	defer conn.Close()
 

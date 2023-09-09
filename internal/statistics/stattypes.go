@@ -30,29 +30,29 @@ func (asls *AvgSysLoadStat) Ceil() {
 	asls.QuaterLoad = math.Ceil(asls.QuaterLoad*100) / 100
 }
 
-type AvgCpuLoadStat struct {
+type AvgCPULoadStat struct {
 	Usr  float64
 	Sys  float64
 	Idle float64
 }
 
-func NewACLS() *AvgCpuLoadStat {
-	return &AvgCpuLoadStat{}
+func NewACLS() *AvgCPULoadStat {
+	return &AvgCPULoadStat{}
 }
 
-func (acls *AvgCpuLoadStat) Sum(arg AvgCpuLoadStat) {
+func (acls *AvgCPULoadStat) Sum(arg AvgCPULoadStat) {
 	acls.Usr += arg.Usr
 	acls.Sys += arg.Sys
 	acls.Idle += arg.Idle
 }
 
-func (acls *AvgCpuLoadStat) Avg(count float64) {
+func (acls *AvgCPULoadStat) Avg(count float64) {
 	acls.Usr /= count
 	acls.Sys /= count
 	acls.Idle /= count
 }
 
-func (acls *AvgCpuLoadStat) Ceil() {
+func (acls *AvgCPULoadStat) Ceil() {
 	acls.Usr = math.Ceil(acls.Usr*100) / 100
 	acls.Sys = math.Ceil(acls.Sys*100) / 100
 	acls.Idle = math.Ceil(acls.Idle*100) / 100
@@ -142,8 +142,8 @@ type FSDInfoStat struct {
 	FSDInodes []FSD
 }
 
-func NewFSDIS(len int) *FSDInfoStat {
-	return &FSDInfoStat{make([]FSD, len), make([]FSD, len)}
+func NewFSDIS(length int) *FSDInfoStat {
+	return &FSDInfoStat{make([]FSD, length), make([]FSD, length)}
 }
 
 func (fis *FSDInfoStat) Sum(arg FSDInfoStat) {
@@ -177,8 +177,9 @@ func (fis *FSDInfoStat) Ceil() {
 	}
 }
 
-// TODO:
+// TODO:.
 type TopTalkersStat struct {
+	_ int
 }
 
 // No statistic for averaging send actual??
@@ -194,8 +195,8 @@ type NetStat struct {
 	TCPStatesCount map[string]float64
 }
 
-func NewNetStat(len int) *NetStat {
-	return &NetStat{make([]Listeners, len), make(map[string]float64)}
+func NewNetStat(length int) *NetStat {
+	return &NetStat{make([]Listeners, length), make(map[string]float64)}
 }
 
 func (ns *NetStat) Sum(arg NetStat) {
@@ -219,7 +220,7 @@ func (ns *NetStat) Ceil() {
 
 type Statistic struct {
 	ASLStat  *AvgSysLoadStat // Ave System Load statistic
-	ACLStat  *AvgCpuLoadStat // Ave Cpu Load statistic
+	ACLStat  *AvgCPULoadStat // Ave Cpu Load statistic
 	DIStat   DiskInfoStats   // Disk Load statistic
 	FSDIStat *FSDInfoStat    // Fyle system info
 	TTStat   *TopTalkersStat // Top talkers statistic

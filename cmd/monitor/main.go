@@ -14,7 +14,6 @@ import (
 	"github.com/exiffM/final-project/internal/config"
 	"github.com/exiffM/final-project/internal/grpc/server"
 	"github.com/exiffM/final-project/internal/monitoring"
-
 	"github.com/spf13/viper"
 )
 
@@ -66,9 +65,9 @@ func main() {
 
 	serv := server.NewServer(agent)
 
-	containered := os.Getenv("IS_IN_CONTAINER")
+	contained := os.Getenv("IS_IN_CONTAINER")
 	var host string
-	if containered == "1" {
+	if contained == "1" {
 		host = "0.0.0.0"
 	} else {
 		host = "localhost"

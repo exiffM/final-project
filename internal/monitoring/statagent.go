@@ -17,7 +17,7 @@ type Agent struct {
 	data            *storage.Storage // Storage of accumulating statistics
 	StorageTime     time.Duration    // Time of clearing storage
 	AllowAvgSysLoad bool             // On/off average system load
-	AllowAvgCpuLoad bool             // On/off average CPU load
+	AllowAvgCPULoad bool             // On/off average CPU load
 	AllowDiskLoad   bool             // On/off disks load
 	AllowDiskFsInfo bool             // On/off disks file system info
 	AllowTTNet      bool             // On/off top talkers net stats
@@ -29,7 +29,7 @@ func NewAgent(cfg config.AgentConfig) *Agent {
 		storage.NewStorage(),
 		time.Second * time.Duration(cfg.StorageTime),
 		cfg.AvgSysLoad,
-		cfg.AvgCpuLoad,
+		cfg.AvgCPULoad,
 		cfg.DiskLoad,
 		cfg.DiskFsInfo,
 		cfg.TTNet,
@@ -80,8 +80,8 @@ func accumulateListeners(fields []string) ([]types.Listeners, error) {
 		info.ProgPid = fields[i+8]
 		info.User = fields[i+6]
 		info.Protoc = fields[i]
-		adress := strings.Split(fields[i+3], ":")
-		value, err := strconv.Atoi(adress[len(adress)-1])
+		address := strings.Split(fields[i+3], ":")
+		value, err := strconv.Atoi(address[len(address)-1])
 		if err != nil {
 			return nil, errAccumulationLis
 		}
@@ -115,11 +115,11 @@ func (a *Agent) averageSystemLoad() (types.AvgSysLoadStat, error) {
 	return types.AvgSysLoadStat{OneMinLoad: min, FiveMinLoad: five, QuaterLoad: quater}, nil
 }
 
-func (a *Agent) averageCpuLoad() (types.AvgCpuLoadStat, error) {
+func (a *Agent) averageCPULoad() (types.AvgCPULoadStat, error) {
 	// Execute top command and grepping CPU average load statistics
 	out, err := executor.RunCmd("top -b -n1 | grep Cpu")
 	if err != nil {
-		return types.AvgCpuLoadStat{}, err
+		return types.AvgCPULoadStat{}, err
 	}
 	// Prepare result
 	splited := strings.Split(out, ",")
@@ -132,19 +132,19 @@ func (a *Agent) averageCpuLoad() (types.AvgCpuLoadStat, error) {
 	}
 	us, err := strconv.ParseFloat(strUs, 64)
 	if err != nil {
-		return types.AvgCpuLoadStat{}, err
+		return types.AvgCPULoadStat{}, err
 	}
 	tmp := strings.Split(strings.TrimSpace(splited[1]), " ")
 	sy, err := strconv.ParseFloat(tmp[0], 64)
 	if err != nil {
-		return types.AvgCpuLoadStat{}, err
+		return types.AvgCPULoadStat{}, err
 	}
 	tmp = strings.Split(strings.TrimSpace(splited[3]), " ")
 	id, err := strconv.ParseFloat(tmp[0], 64)
 	if err != nil {
-		return types.AvgCpuLoadStat{}, err
+		return types.AvgCPULoadStat{}, err
 	}
-	return types.AvgCpuLoadStat{Usr: us, Sys: sy, Idle: id}, nil
+	return types.AvgCPULoadStat{Usr: us, Sys: sy, Idle: id}, nil
 }
 
 func (a *Agent) loadDiskInfo() (types.DiskInfoStats, error) {
@@ -262,8 +262,8 @@ func (a *Agent) Statistics() (types.Statistic, error) {
 		}
 		result.ASLStat = &avgsys
 	}
-	if a.AllowAvgCpuLoad {
-		avgcpu, err := a.averageCpuLoad()
+	if a.AllowAvgCPULoad {
+		avgcpu, err := a.averageCPULoad()
 		if err != nil {
 			return types.Statistic{}, err
 		}
@@ -322,7 +322,7 @@ func (a *Agent) Average(m int) types.Statistic {
 	if a.AllowAvgSysLoad {
 		avgStat.ASLStat = types.NewASLS()
 	}
-	if a.AllowAvgCpuLoad {
+	if a.AllowAvgCPULoad {
 		avgStat.ACLStat = types.NewACLS()
 	}
 	if a.AllowDiskLoad {
@@ -339,7 +339,7 @@ func (a *Agent) Average(m int) types.Statistic {
 		if a.AllowAvgSysLoad {
 			avgStat.ASLStat.Sum(*elem.ASLStat)
 		}
-		if a.AllowAvgCpuLoad {
+		if a.AllowAvgCPULoad {
 			avgStat.ACLStat.Sum(*elem.ACLStat)
 		}
 		if a.AllowDiskLoad {
@@ -357,7 +357,7 @@ func (a *Agent) Average(m int) types.Statistic {
 		avgStat.ASLStat.Avg(float64(len(stats)))
 		avgStat.ASLStat.Ceil()
 	}
-	if a.AllowAvgCpuLoad {
+	if a.AllowAvgCPULoad {
 		avgStat.ACLStat.Avg(float64(len(stats)))
 		avgStat.ACLStat.Ceil()
 	}

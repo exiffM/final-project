@@ -9,13 +9,10 @@ import (
 	"github.com/exiffM/final-project/internal/grpc/convert"
 	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
 	"github.com/exiffM/final-project/internal/monitoring"
-
 	"google.golang.org/grpc"
 )
 
-var (
-	errInvalidRequest = errors.New("invalid time intervals requested")
-)
+var errInvalidRequest = errors.New("invalid time intervals requested")
 
 type Server struct {
 	rpcapi.UnimplementedMonitorServer
@@ -44,7 +41,7 @@ func (s *Server) SendStatistic(r *rpcapi.Request, stream rpcapi.Monitor_SendStat
 					return nil
 				case <-sendTicker.C:
 					stats := s.monitor.Average(int(r.AverageInterval))
-					if err := stream.Send(convert.ConvertStatistic(stats)); err != nil {
+					if err := stream.Send(convert.Statistic(stats)); err != nil {
 						return err
 					}
 				}
@@ -53,9 +50,9 @@ func (s *Server) SendStatistic(r *rpcapi.Request, stream rpcapi.Monitor_SendStat
 	}
 }
 
-func (s *Server) Start(adress string) error {
+func (s *Server) Start(address string) error {
 	log.Print("Start GRPC server")
-	lis, err := net.Listen("tcp", adress)
+	lis, err := net.Listen("tcp", address)
 	if err != nil {
 		return err
 	}

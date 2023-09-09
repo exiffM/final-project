@@ -8,7 +8,6 @@ import (
 
 	"github.com/exiffM/final-project/internal/grpc/convert"
 	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -30,7 +29,7 @@ func main() {
 	r := &rpcapi.Request{Timeout: 5, AverageInterval: 15}
 	monitorClient, err := client.SendStatistic(context.Background(), r)
 	if err != nil {
-		log.Fatal("Invalid request!")
+		log.Fatal("Invalid request!") //nolint: gocritic
 	}
 	for {
 		for {
