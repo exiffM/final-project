@@ -19,18 +19,20 @@ func init() {
 	if err != nil {
 		return
 	}
-	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
-		log.Fatal(err) //nolint: gocritic
+		file.Close()
+		log.Fatal(err)
 	}
 
 	configuration := config.NewConfig()
 	err = viper.Unmarshal(configuration)
 	if err != nil {
+		file.Close()
 		log.Fatalf("Can't convert config to struct %v", err.Error())
 	}
+	file.Close()
 	agent = NewAgent(*configuration)
 }
 

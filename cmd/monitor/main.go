@@ -41,18 +41,20 @@ func main() {
 		fmt.Println(err.Error() + "No such file o directory")
 		return
 	}
-	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
-		log.Fatal("Reading config error!") //nolint: gocritic
+		file.Close()
+		log.Fatal("Reading config error!")
 	}
 
 	configuration := config.NewConfig()
 	err = viper.Unmarshal(configuration)
 	if err != nil {
+		file.Close()
 		log.Fatalf("Can't convert config to struct %v", err.Error())
 	}
+	file.Close()
 
 	wg := sync.WaitGroup{}
 	wg.Add(2)

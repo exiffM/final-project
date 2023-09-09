@@ -23,18 +23,20 @@ func init() {
 	if err != nil {
 		return
 	}
-	defer file.Close()
 
 	viper.SetConfigType("yaml")
 	if err := viper.ReadConfig(file); err != nil {
-		log.Fatal(err) //nolint: gocritic
+		file.Close()
+		log.Fatal(err)
 	}
 
 	configuration := config.NewConfig()
 	err = viper.Unmarshal(configuration)
 	if err != nil {
+		file.Close()
 		log.Fatalf("Can't convert config to struct %v", err.Error())
 	}
+	file.Close()
 	agent = monitoring.NewAgent(*configuration)
 }
 
@@ -43,7 +45,6 @@ func TestLogic(t *testing.T) {
 	wg.Add(2)
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	go func() {
 		defer wg.Done()
 		if err := agent.AccumulateStats(ctx); err != nil {
@@ -62,15 +63,15 @@ func TestLogic(t *testing.T) {
 
 	conn, err := grpc.Dial("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		log.Fatal(err) //nolint: gocritic
+		log.Fatal(err)
 	}
-	defer conn.Close()
 
 	client := rpcapi.NewMonitorClient(conn)
 
 	r := &rpcapi.Request{Timeout: 5, AverageInterval: 15}
 	monitorClient, err := client.SendStatistic(context.Background(), r)
 	if err != nil {
+		conn.Close()
 		log.Fatal("Invalid request!")
 	}
 	var stats *rpcapi.Statistic
@@ -80,6 +81,8 @@ MAINFOR:
 			stats, err = monitorClient.Recv()
 			if err != nil {
 				log.Printf("response error: %v\n", err)
+				conn.Close()
+				cancel()
 				return
 			}
 			require.NotEmpty(t, stats, "Statistic hasn't been received!")
