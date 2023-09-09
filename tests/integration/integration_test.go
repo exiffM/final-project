@@ -8,6 +8,7 @@ import (
 	"os"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/exiffM/final-project/internal/config"
 	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
@@ -66,6 +67,7 @@ func (m *MonitorSuite) SetupTest() {
 }
 
 func (m *MonitorSuite) TestService() {
+	time.Sleep(5 * time.Millisecond)
 	host := os.Getenv("MONITOR_HOST")
 	if host == "" {
 		host = "localhost:50051"
