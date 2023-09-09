@@ -2,13 +2,14 @@ package server
 
 import (
 	"context"
-	"final-project/internal/config"
-	rpcapi "final-project/internal/grpc/pb"
-	"final-project/internal/monitoring"
 	"log"
 	"os"
 	"sync"
 	"testing"
+
+	"github.com/exiffM/final-project/internal/config"
+	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
+	"github.com/exiffM/final-project/internal/monitoring"
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"

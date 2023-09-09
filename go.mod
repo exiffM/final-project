@@ -1,4 +1,4 @@
-module final-project
+module github.com/exiffM/final-project
 
 go 1.20
 

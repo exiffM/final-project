@@ -1,8 +1,9 @@
 package storage
 
 import (
-	types "final-project/internal/statistics"
 	"testing"
+
+	types "github.com/exiffM/final-project/internal/statistics"
 
 	"github.com/stretchr/testify/require"
 )

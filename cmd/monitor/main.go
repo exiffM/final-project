@@ -2,9 +2,6 @@ package main
 
 import (
 	"context"
-	"final-project/internal/config"
-	"final-project/internal/grpc/server"
-	"final-project/internal/monitoring"
 	"flag"
 	"fmt"
 	"log"
@@ -13,6 +10,10 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/exiffM/final-project/internal/config"
+	"github.com/exiffM/final-project/internal/grpc/server"
+	"github.com/exiffM/final-project/internal/monitoring"
 
 	"github.com/spf13/viper"
 )

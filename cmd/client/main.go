@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"final-project/internal/grpc/convert"
-	rpcapi "final-project/internal/grpc/pb"
 	"log"
 	"net"
 	"os"
+
+	"github.com/exiffM/final-project/internal/grpc/convert"
+	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"

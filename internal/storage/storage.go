@@ -1,8 +1,9 @@
 package storage
 
 import (
-	types "final-project/internal/statistics"
 	"sync"
+
+	types "github.com/exiffM/final-project/internal/statistics"
 )
 
 type Storage struct {

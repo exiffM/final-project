@@ -2,12 +2,13 @@ package server
 
 import (
 	"errors"
-	"final-project/internal/grpc/convert"
-	rpcapi "final-project/internal/grpc/pb"
-	"final-project/internal/monitoring"
 	"log"
 	"net"
 	"time"
+
+	"github.com/exiffM/final-project/internal/grpc/convert"
+	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
+	"github.com/exiffM/final-project/internal/monitoring"
 
 	"google.golang.org/grpc"
 )

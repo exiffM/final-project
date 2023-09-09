@@ -3,13 +3,14 @@ package monitoring
 import (
 	"context"
 	"errors"
-	"final-project/internal/config"
-	"final-project/internal/executor"
-	types "final-project/internal/statistics"
-	"final-project/internal/storage"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/exiffM/final-project/internal/config"
+	"github.com/exiffM/final-project/internal/executor"
+	types "github.com/exiffM/final-project/internal/statistics"
+	"github.com/exiffM/final-project/internal/storage"
 )
 
 type Agent struct {

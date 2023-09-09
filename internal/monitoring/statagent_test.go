@@ -2,11 +2,12 @@ package monitoring
 
 import (
 	"context"
-	"final-project/internal/config"
 	"log"
 	"os"
 	"testing"
 	"time"
+
+	"github.com/exiffM/final-project/internal/config"
 
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/require"

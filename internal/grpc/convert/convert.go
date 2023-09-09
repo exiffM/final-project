@@ -1,9 +1,10 @@
 package convert
 
 import (
-	rpcapi "final-project/internal/grpc/pb"
-	types "final-project/internal/statistics"
 	"fmt"
+
+	rpcapi "github.com/exiffM/final-project/internal/grpc/pb"
+	types "github.com/exiffM/final-project/internal/statistics"
 )
 
 type ClientRequest struct {
