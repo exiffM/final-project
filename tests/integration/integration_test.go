@@ -4,7 +4,6 @@ package integration_test
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"sync"
 	"testing"
@@ -50,7 +49,6 @@ func (m *MonitorSuite) SetupSuite() {
 }
 
 func (m *MonitorSuite) SetupTest() {
-	fmt.Print("Test set up")
 	m.wg.Add(2)
 
 	go func() {

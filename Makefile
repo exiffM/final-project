@@ -59,7 +59,7 @@ docker-stop:
 	docker compose down;
 
 integration-test:
-	go test -tags integration ./tests/integration
+	go test -tags integration -race -v -count=10 -timeout=3m30s ./tests/integration
 
 install-lint-deps:
 	(which golangci-lint > /dev/null) || curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(shell go env GOPATH)/bin v1.53.3
