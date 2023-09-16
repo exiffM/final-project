@@ -1,6 +1,6 @@
 storagetime: 60
 avgsysload: true
-avgcpuload: false
-diskload: false
-diskfsinfo: false
+avgcpuload: true
+diskload: true
+diskfsinfo: true
 netstats: true
