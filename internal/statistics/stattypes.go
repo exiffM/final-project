@@ -177,11 +177,6 @@ func (fis *FSDInfoStat) Ceil() {
 	}
 }
 
-// TODO:.
-type TopTalkersStat struct {
-	_ int
-}
-
 // No statistic for averaging send actual??
 type Listeners struct {
 	ProgPid string
@@ -223,6 +218,5 @@ type Statistic struct {
 	ACLStat  *AvgCPULoadStat // Ave Cpu Load statistic
 	DIStat   DiskInfoStats   // Disk Load statistic
 	FSDIStat *FSDInfoStat    // Fyle system info
-	TTStat   *TopTalkersStat // Top talkers statistic
 	NStat    *NetStat        // Net statistic
 }

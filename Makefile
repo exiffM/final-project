@@ -50,7 +50,7 @@ generate:
 	protoc --go-grpc_out=./internal/grpc/pb --go_out=./internal/grpc/pb ./api/MonitorService.proto
 
 test:
-	go test -v -race -cover -timeout=1m ./...
+	go test -v -race -cover -timeout=1m -count=10 ./...
 
 docker-start-components:
 	docker compose up --build;

@@ -74,12 +74,6 @@ func Statistic(s types.Statistic) *rpcapi.Statistic {
 			pbStat.FsInfo.Fsdinodes = append(pbStat.FsInfo.Fsdinodes, &block)
 		}
 	}
-	if s.TTStat == nil {
-		pbStat.Tts = nil
-	} else {
-		// TODO:
-		_ = 5
-	}
 	if s.NStat == nil {
 		pbStat.Net = nil
 	} else {
@@ -112,6 +106,7 @@ func PrintStatistic(s *rpcapi.Statistic) {
 	}
 	// Average disk load
 	if s.DiskInfo != nil {
+		fmt.Println("Disks load information:")
 		fmt.Printf("Device\t\ttps\t\tKb_read/s\t\tKb_wrtn/s\n")
 		for key, elem := range s.DiskInfo.Stats {
 			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\n", key, elem.Tps, elem.Kbrps, elem.Kbwps)
@@ -119,13 +114,13 @@ func PrintStatistic(s *rpcapi.Statistic) {
 	}
 	// Disks file system info
 	if s.FsInfo != nil {
-		fmt.Println("Disks file system info by blocks")
+		fmt.Println("Disks file system info by blocks:")
 		fmt.Println("Source\t\tFile system\t\tSize\t\tUsed\t\tPercent")
 		for _, elem := range s.FsInfo.Fsdblocks {
 			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\t\t%v\n",
 				elem.Source, elem.Fs, elem.Total, elem.Used, elem.Percent)
 		}
-		fmt.Println("Disks file system info by inodes")
+		fmt.Println("Disks file system info by inodes:")
 		fmt.Println("Source\t\tFile system\t\tTotal\t\tiUsed\t\tiPercent")
 		for _, elem := range s.FsInfo.Fsdinodes {
 			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\t\t%v\n",
@@ -134,7 +129,7 @@ func PrintStatistic(s *rpcapi.Statistic) {
 	}
 	// Net stats: tcp/udp listeners
 	if s.Net != nil {
-		fmt.Println("Net statistic tcp/udp listeners")
+		fmt.Println("Net statistic tcp/udp listeners:")
 		fmt.Println("Prog/PID\t\tUser\t\tProtocol\t\tPort")
 		for _, elem := range s.Net.TuListeners {
 			fmt.Printf("%v\t\t%v\t\t%v\t\t%v\n",

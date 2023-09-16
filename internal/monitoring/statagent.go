@@ -20,7 +20,6 @@ type Agent struct {
 	AllowAvgCPULoad bool             // On/off average CPU load
 	AllowDiskLoad   bool             // On/off disks load
 	AllowDiskFsInfo bool             // On/off disks file system info
-	AllowTTNet      bool             // On/off top talkers net stats
 	AllowNetStats   bool             // On/off net stats
 }
 
@@ -32,7 +31,6 @@ func NewAgent(cfg config.AgentConfig) *Agent {
 		cfg.AvgCPULoad,
 		cfg.DiskLoad,
 		cfg.DiskFsInfo,
-		cfg.TTNet,
 		cfg.NetStats,
 	}
 }
@@ -282,10 +280,6 @@ func (a *Agent) Statistics() (types.Statistic, error) {
 			return types.Statistic{}, err
 		}
 		result.FSDIStat = &fsdi
-	}
-	if a.AllowTTNet {
-		// TODO:
-		_ = 5
 	}
 	if a.AllowNetStats {
 		net, err := a.netStatistics()

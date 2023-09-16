@@ -6,7 +6,6 @@ type AgentConfig struct {
 	AvgCPULoad  bool  // On/off average CPU load
 	DiskLoad    bool  // On/off disks load
 	DiskFsInfo  bool  // On/off disks file system info
-	TTNet       bool  // On/off top talkers net stats
 	NetStats    bool  // On/off net stats
 }
 

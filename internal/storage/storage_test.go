@@ -28,7 +28,6 @@ func TestPullOut(t *testing.T) {
 			ACLStat:  types.NewACLS(),
 			DIStat:   make(types.DiskInfoStats),
 			FSDIStat: types.NewFSDIS(0),
-			TTStat:   &types.TopTalkersStat{},
 			NStat:    types.NewNetStat(0),
 		}
 		st.ASLStat.OneMinLoad = 1 + float64(i)
@@ -46,7 +45,6 @@ func TestPullOut(t *testing.T) {
 			ACLStat:  types.NewACLS(),
 			DIStat:   make(types.DiskInfoStats),
 			FSDIStat: types.NewFSDIS(0),
-			TTStat:   &types.TopTalkersStat{},
 			NStat:    types.NewNetStat(0),
 		}
 		st.ASLStat.OneMinLoad = 1 + float64(i)
